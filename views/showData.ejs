@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+    <title>Registered users </title>
+</head>
+<body>
+    <div class="text-center m-5">
+        <h1 class="display-4 pb-2">Registered</h1>
+        <div class="overflow-x-auto">
+            <table class="table text-nowrap table-striped">
+                <thead>
+                  <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">First Name</th>
+                    <th scope="col">Middle Name</th>
+                    <th scope="col">Last Name</th>
+                    <th scope="col">Date of birth</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Mobile Number</th>
+                    <th scope="col">Address(part I)</th>
+                    <th scope="col">Address(part II)</th>
+                    <th scope="col">City</th>
+                    <th scope="col">State</th>
+                    <th scope="col">Pincode</th>
+                    <th scope="col">10th Percentage</th>
+                    <th scope="col">12th Percentage</th>
+                    <th scope="col">Current Semester</th>
+                    <th scope="col">SEM I</th>
+                    <th scope="col">SEM II</th>
+                    <th scope="col">SEM III</th>
+                    <th scope="col">SEM IV</th>
+                    <th scope="col">SEM V</th>
+                    <th scope="col">SEM VI</th>
+                    <th scope="col">SEM VII</th>
+                    <th scope="col">SEM VIII</th>
+                    <th scope="col">Resume Link</th>
+                  </tr>
+                </thead>
+                <tbody>
+                    <% users.forEach((user, idx) => { %>
+                        <tr>
+                          <th scope="row"><%= (idx+1) %></th>
+                          <% keys.forEach((key) => { %>
+                            <td><%= user[key] ? user[key] : '' %></td>
+                          <% }) %>
+                        </tr>
+                    <% }) %>
+                </tbody>
+              </table>
+        </div>
+        <form action="/" method="get">
+            <button class="btn btn-danger btn-lg mx-2 my-4" type="submit">Home</button>
+        </form>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
+</body>
+</html>

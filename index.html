@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+    <title>Document</title>
+</head>
+<body>
+    <div class="text-center my-5">
+        <div class="position-relative top-50 d-inline-block text-center border border-secondary rounded">
+            <h1 class="py-3 text-bg-warning px-2 d-inline-block ">Welcome to Data Entry</h1>
+            <div class="d-flex flex-column justify-content-evenly py-2">
+                <form action="/register" method="get">
+                    <button class="btn btn-outline-primary btn-lg mx-2 my-3" type="submit">Register</button>
+                </form>
+                <form action="/show" method="get">
+                    <button class="btn btn-outline-success btn-lg mx-2 my-3" type="submit">Show Data</button>
+                </form>
+            </div>
+            <p class="pt-3 mb-1"></p>
+        </div>
+    </div>
+    <script type="text/javascript">
+        window.onload = () => {
+            console.log("here");
+            let p = document.querySelector("p");
+            let d = new Date();
+            console.log(d.getDate());
+            p.textContent = d.toLocaleDateString(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+            
+        }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
+</body>
+</html>
