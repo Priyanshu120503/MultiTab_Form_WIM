@@ -68,7 +68,10 @@
                     </div>
                     <div class="col-md-4">
                         <label for="inputNumber" class="form-label">Mobile Number</label>
-                        <input type="number" class="form-control" min="1000000000" max="9999999999" id="inputNumber" name="phone" required>
+                        <div class="input-group">
+                            <span class="input-group-text" id="basic-addon1">+91</span>
+                            <input type="number" class="form-control" min="1000000000" max="9999999999" id="inputNumber" name="phone" required>
+                        </div>
                     </div>
                     <div class="col-12">
                         <label for="inputAddress" class="form-label">Address</label>
@@ -222,7 +225,7 @@
             selects = document.querySelectorAll("select");
             let done = true;
             let d = {};
-            inputs.forEach(element => {
+            inputs.forEach(async element => {
                 if(element.name != 'resume' && element.name != 'lName' && element.name != 'mName' && element.value === '') {
                     done = false;
                 }
@@ -233,6 +236,18 @@
             });
 
             if(done) {
+                let valid = await checkMobileNumber(document.getElementById('inputNumber').value);
+                if(!valid) {
+                    alert('The mobile number entered is not a valid Indian phone number. Please enter a valid mobile number');
+                    return;
+                }   
+
+                valid = await checkEmail(document.getElementById('inputEmail4').value);
+                if(!valid) {
+                    alert('The email entered is not valid. Please enter a valid email id');
+                    return;
+                }   
+
                 await fetch("/register", {
                     method: "POST",
                     body: JSON.stringify(d),
@@ -245,8 +260,47 @@
             }
             else
                 alert('Please fill all the required fields!');
-
             
+        }
+
+        async function checkMobileNumber(number) {
+            const url = 'https://phonenumbervalidatefree.p.rapidapi.com/ts_PhoneNumberValidateTest.jsp?number=%2B91' + number + '&country=IN';
+            const options = {
+                method: 'GET',
+                headers: {
+                    'X-RapidAPI-Key': '<%= api_key %>',
+                    'X-RapidAPI-Host': 'phonenumbervalidatefree.p.rapidapi.com'
+                }
+            };
+
+            try {
+                const response = await fetch(url, options);
+                const result = await response.json();
+                console.log(result.isValidNumber);
+                console.log(result.isValidNumberForRegion);
+                return result.isValidNumber && result.isValidNumberForRegion;
+            } catch (error) {
+                console.error(error);
+            }
+
+            return false;
+        }
+
+        async function checkEmail(mail) {
+            const url = 'https://api.zerobounce.net/v2/validate?api_key=<%= z_api_key %>&email=' + mail + '&ip_address=156.124.12.145';
+            const options = {
+                method: 'GET'
+            };
+
+            try {
+                const response = await fetch(url, options);
+                const result = await response.text();
+                console.log(result);
+            } catch (error) {
+                console.error(error);
+            }
+
+            return status === 'valid';
         }
 
     </script>

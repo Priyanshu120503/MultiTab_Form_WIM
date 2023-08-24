@@ -1,6 +1,7 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const fs = require("fs");
+require('dotenv').config();
 
 app = express()
 app.use(bodyParser.json());
@@ -13,7 +14,8 @@ app.get("/", (req, res) => {
 });
 
 app.get("/register", (req, res) => {
-    res.sendFile(__dirname + "/register.html");
+    // res.sendFile(__dirname + "/register.html");
+    res.render("register", {api_key: process.env.API_KEY, z_api_key: process.env.ZERO_BOUNCE_API_KEY});
 });
 
 app.post("/register", (req, res) => {
@@ -25,6 +27,7 @@ app.post("/register", (req, res) => {
     users.push(req.body);
     usersJson = JSON.stringify(users, 4);
     fs.writeFileSync(path, usersJson, (err) => {if(err) console.log(err); console.log("Updated file")});
+
     res.redirect("/");
 });
 
