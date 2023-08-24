@@ -1,6 +1,7 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const fs = require("fs");
+const { jsPDF } = require("jspdf");
 require('dotenv').config();
 
 app = express()
@@ -14,7 +15,6 @@ app.get("/", (req, res) => {
 });
 
 app.get("/register", (req, res) => {
-    // res.sendFile(__dirname + "/register.html");
     res.render("register", {api_key: process.env.API_KEY, z_api_key: process.env.ZERO_BOUNCE_API_KEY});
 });
 
@@ -28,12 +28,25 @@ app.post("/register", (req, res) => {
     usersJson = JSON.stringify(users, 4);
     fs.writeFileSync(path, usersJson, (err) => {if(err) console.log(err); console.log("Updated file")});
 
+    const doc = new jsPDF();
+    doc.text("Data Entered", 10, 10);
+    let i = 30;
+    for(let key in req.body) {
+        doc.text(key.toUpperCase() + ": " + req.body[key], 10, i);
+        i += 10;
+    }
+    doc.save('data.pdf')
+
     res.redirect("/");
 });
 
 app.get("/success", (req, res) => {
     res.sendFile(__dirname + "/success.html");
 });
+
+app.get("/report", (req, res) => {
+    res.sendFile(__dirname + "/data.pdf");
+})
 
 app.get("/show", (req, res) => {
     let usersJson = fs.readFileSync(path, "utf-8");
