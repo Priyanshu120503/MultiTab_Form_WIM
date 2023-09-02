@@ -2,6 +2,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const fs = require("fs");
 const { jsPDF } = require("jspdf");
+const { get } = require("http");
 require('dotenv').config();
 
 app = express()
@@ -57,5 +58,48 @@ app.get("/show", (req, res) => {
     res.render("showData", {users: users, keys: keys});
 });
 
+app.get("/analysis", async (req, res) => {
+	let usersJson = fs.readFileSync(path, "utf-8");
+	let users = JSON.parse(usersJson);
+	let keys = ['fName', 'mName', 'lName', 'dob', 'email', 'phone', 'addr1', 'addr2', 'city', 'state', 'pincode',
+	'tenth', 'twelth', 'sem', 'inputSem1', 'inputSem2', 'inputSem3', 'inputSem4',
+	'inputSem5', 'inputSem6', 'inputSem7', 'inputSem8', 'resume'];
+
+	let semMap = {'I': 1, 'II': 2, 'III': 3, 'IV': 4, 'V': 5, 'VI': 6, 'VII': 7, 'VIII': 8};
+	let genderData = {'Male': 0, 'Female': 0, 'Other': 0};
+	let semWiseData = {'inputSem1': [], 'inputSem2': [], 'inputSem3': [], 'inputSem4': [], 'inputSem5': [], 'inputSem6': [], 'inputSem7': [], 'inputSem8': []};
+	let location = {};
+    let taken = 0;
+
+    await users.forEach(async (user, index) => {
+        genderData[user['gender']] += 1;
+
+        for(let i = 1; i < semMap[user['sem']]; i++) {
+            let key_name = 'inputSem' + i;
+            semWiseData[key_name].push(user[key_name]);
+        }
+        let loc = await fetch("https://api.api-ninjas.com/v1/geocoding?city=" + user['city'], 
+                                {method: 'GET', headers: {'X-Api-Key': process.env.API_NINJAS_API_KEY}}).
+                                then(res => res.json()).
+                                then(data => data)     
+
+        if(loc.length > 0) {
+            if(!location.hasOwnProperty(JSON.stringify([loc[0].latitude, loc[0].longitude])))
+                location[JSON.stringify([loc[0].latitude, loc[0].longitude])] = [];    
+            location[JSON.stringify([loc[0].latitude, loc[0].longitude])].push(user['fName'] + " " + user['lName']);
+            taken++;
+        }
+        else {
+            console.log("No data for " + user['city']);
+        }
+        
+        if(taken == users.length) {    
+            res.render("analysis", {genders: ['Male', 'Female', 'Other'], 
+                                    genderDist: Object.values(genderData), 
+                                    semWiseData: semWiseData,
+                                    locations: location});
+        }
+    });
+});
 
 app.listen(5000, () => {console.log("Server listening on port 5000.")});

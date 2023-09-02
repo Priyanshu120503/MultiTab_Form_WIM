@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+  <head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Data Analysis</title>
+    <link rel = "stylesheet" href = "http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css"/>
+    <script src = "http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
+	<script src="https://cdn.plot.ly/plotly-2.25.2.min.js" charset="utf-8"></script>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+  </head>
+  <body>
+	<h1 class="text-center display-2">Analysis</h1>
+
+    <div class="d-flex justify-content-evenly">
+        <div class="border border-3 d-inline-block m-3 px-5 py-3">
+              <p class="display-4"><u>Gender Distribution</u></p>
+              <div id="genderDist" > </div>
+        </div>
+    
+        <div class="border border-3 d-inline-block m-3 px-5 py-3">
+            <p class="display-5"><u>Semester Wise Marks Distribution</u></p>
+            <p class="lead my-0">(Based on data entered)</p>
+            <div id="SemWiseMarkDist"></div>
+        </div>
+    </div>
+
+    <div class="d-flex justify-content-evenly my-4 align-items-center">
+        <p class="display-3 text-center">People<br>Locations</p>
+        <div id = "map" style = "width: 900px; height: 700px" class="d-inline-block shadow border border-warning border-3"></div>
+    </div>
+
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
+	<script>
+  	// ----------------------------
+  	var data = [{
+    	values: '<%= genderDist %>'.split(','),
+    	labels: '<%= genders %>'.split(','),
+    	type: 'pie'
+  	}];
+
+  	var layout = {
+    	height: 400,
+    	width: 500
+  	};
+
+  	Plotly.newPlot('genderDist', data, layout);
+  	// ----------------------------
+
+  	// --------------------------------
+  	let semWiseData = <%- JSON.stringify(semWiseData) %>;
+
+  	// ----------------------------
+      
+    let semMap = {'I': 1, 'II': 2, 'III': 3, 'IV': 4, 'V': 5, 'VI': 6, 'VII': 7, 'VIII': 8};
+    let semMap2 = {1: 'I', 2: 'II', 3: 'III', 4: 'IV', 5: 'V', 6: 'VI', 7: 'VII', 8: 'VIII'};
+    let traces = [];
+    Object.keys(semWiseData).forEach(sem => {
+        let trace = {
+            y: [],
+            type: 'box',
+            name: 'SEM ' + semMap2[sem.charAt(sem.length - 1)]
+        }
+        
+        for(let i = 0; i < semWiseData[sem].length; i++) {
+            trace.y.push(Number(semWiseData[sem][i]));
+        }
+        
+        traces.push(trace);
+    });
+    
+    var boxLayout = {
+        xaxis: {title: 'Semester'},
+        yaxis: {title: 'Distribution'},
+        width: 600
+    };
+    Plotly.newPlot('SemWiseMarkDist', traces, boxLayout);
+    // ----------------------------
+    // Creating map options
+    var mapOptions = {
+        center: [22.0785451,78.878176],
+        zoom: 5
+    }
+        
+    // Creating a map object
+    var map = new L.map('map', mapOptions);
+        
+    // Creating a Layer object
+    var layer = new L.TileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png');
+        
+    // Adding layer to the map
+    map.addLayer(layer);
+
+    let locations = <%- JSON.stringify(locations) %>;
+
+    console.log("locations")
+    console.log(locations);
+
+    Object.keys(locations).forEach(loc => {
+        // Creating a marker
+        var marker = new L.Marker(JSON.parse(loc));
+        
+        // Adding pop-up to the marker
+        marker.bindPopup("<h4>People living here: </h4>" + locations[loc].join("<br>")).openPopup();
+        
+        // Adding marker to the map
+        marker.addTo(map);
+    })
+
+	</script>
+  </body>
+</html>

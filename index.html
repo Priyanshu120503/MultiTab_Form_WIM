@@ -11,22 +11,17 @@
         <div class="position-relative top-50 d-inline-block text-center border border-secondary rounded">
             <h1 class="py-3 text-bg-warning px-2 d-inline-block ">Welcome to Data Entry</h1>
             <div class="d-flex flex-column justify-content-evenly py-2">
-                <form action="/register" method="get">
-                    <button class="btn btn-outline-primary btn-lg mx-2 my-3" type="submit">Register</button>
-                </form>
-                <form action="/show" method="get">
-                    <button class="btn btn-outline-success btn-lg mx-2 my-3" type="submit">Show Data</button>
-                </form>
+                <a class="btn btn-outline-primary btn-lg mx-2 my-3" href="/register">Register</a>
+                <a class="btn btn-outline-success btn-lg mx-2 my-3" href="/show">Show Data</a>
+                <a class="btn btn-outline-danger btn-lg mx-2 my-3" href="analysis">Analysis</a>
             </div>
             <p class="pt-3 mb-1"></p>
         </div>
     </div>
     <script type="text/javascript">
         window.onload = () => {
-            console.log("here");
             let p = document.querySelector("p");
             let d = new Date();
-            console.log(d.getDate());
             p.textContent = d.toLocaleDateString(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
             
         }
